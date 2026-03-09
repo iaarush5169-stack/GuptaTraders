@@ -153,7 +153,15 @@ transition:0.3s;
 <button onclick="location.href='cart.html'">Cart</button>
 <button onclick="location.href='unavailable.html'">Unavailable</button>
 </div>
+</div>
+<div id="orderStatusBar" style="display:none;">
+<h3>Order Status</h3>
 
+<div style="width:100%;background:#ddd;border-radius:10px;">
+<div id="statusFill" style="width:20%;height:20px;background:#4CAF50;border-radius:10px;"></div>
+</div>
+
+<p id="statusText">Order Pending</p>
 </div>
 
 <div class="container" id="products"></div>
@@ -392,7 +400,41 @@ t.style.opacity=0;
 },2000);
 
 }
+function updateOrderBar(){
 
+let status = localStorage.getItem("orderStatus");
+
+if(!status) return;
+
+document.getElementById("orderStatusBar").style.display="block";
+
+let fill=document.getElementById("statusFill");
+let text=document.getElementById("statusText");
+
+if(status==="pending"){
+fill.style.width="20%";
+text.innerText="Order is being sent to godown";
+}
+
+if(status==="accepted"){
+fill.style.width="70%";
+text.innerText="Order is coming";
+}
+
+if(status==="ready"){
+fill.style.width="100%";
+text.innerText="Order Ready";
+}
+
+if(status==="unavailable"){
+fill.style.width="100%";
+fill.style.background="red";
+text.innerText="Order Unavailable";
+}
+
+}
+
+updateOrderBar();
 </script>
 
 </body>
