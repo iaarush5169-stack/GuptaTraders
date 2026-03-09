@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Gupta Traders</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Poppins',sans-serif;
+background:#f4f6fb;
+margin:0;
+}
+
+.topbar{
+background:white;
+padding:15px 30px;
+box-shadow:0 3px 10px rgba(0,0,0,0.08);
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.logo{
+font-weight:600;
+font-size:20px;
+margin-right:20px;
+}
+
+.searchHeader{
+flex:1;
+}
+
+#search{
+width:80%;
+padding:10px;
+border-radius:10px;
+border:1px solid #ddd;
+font-family:Poppins;
+}
+
+.menu{
+display:flex;
+gap:10px;
+}
+
+.menu button{
+border:none;
+padding:8px 14px;
+border-radius:8px;
+background:#f1f2f6;
+cursor:pointer;
+}
+
+.container{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:20px;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+text-align:center;
+cursor:pointer;
+}
+
+.card img{
+width:60px;
+height:60px;
+object-fit:contain;
+}
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.popupBox{
+background:white;
+padding:30px;
+border-radius:15px;
+width:300px;
+position:relative;
+}
+
+.closeBtn{
+position:absolute;
+top:10px;
+right:15px;
+font-size:18px;
+cursor:pointer;
+}
+
+select,input{
+width:100%;
+padding:10px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-top:10px;
+}
+
+button.add{
+margin-top:15px;
+background:#27ae60;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:8px;
+cursor:pointer;
+width:100%;
+}
+
+#toast{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+background:white;
+padding:12px 22px;
+border-radius:30px;
+box-shadow:0 10px 25px rgba(0,0,0,0.25);
+opacity:0;
+transition:0.3s;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+
+<div class="logo">Gupta Traders</div>
+
+<div class="searchHeader">
+<input id="search" placeholder="Search products...">
+</div>
+
+<div class="menu">
+<button onclick="location.href='cart.html'">Cart</button>
+<button onclick="location.href='unavailable.html'">Unavailable</button>
+</div>
+
+</div>
+
+<div class="container" id="products"></div>
+
+<div class="popup" id="popup">
+
+<div class="popupBox">
+
+<div class="closeBtn" onclick="closePopup()">❌</div>
+
+<h3 id="productName"></h3>
+
+<div id="colorBox" style="display:none">
+<label>Color</label>
+<select id="color">
+<option>Fire Red</option>
+<option>Fast Red</option>
+<option>Black</option>
+<option>Fast Yellow</option>
+<option>Fast Yellow Green</option>
+<option>Fast Green</option>
+<option>Magenta</option>
+<option>Fast Blue</option>
+<option>Fast Violet</option>
+<option>Burnt Sienna</option>
+<option>Turkey Umber</option>
+<option>Yellow Oxide</option>
+<option>Orange</option>
+<option>Bright Orange</option>
+</select>
+</div>
+<div id="typeBox" style="display:none">
+<label>Type</label>
+<select id="type">
+<option>White</option>
+<option>Black</option>
+<option>Clear</option>
+</select>
+</div>
+<label>Weight</label>
+<select id="weight"></select>
+
+<label>Units</label>
+<input type="number" id="qty" value="1">
+
+<label>Type</label>
+<select id="unit">
+<option>pieces</option>
+<option>case</option>
+</select>
+
+<button class="add" onclick="addToCart()">Add to Cart</button>
+
+</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+const products=[
+
+{name:"Fevicol SH",img:"https://www.plyduniya.com/cdn/shop/products/Fevicol-SH_5b498520-ee33-456c-8199-5005cada1f79.jpg?v=1752908454",weights:["50g","125g","250g","500g","1kg","2kg","5kg","10kg","20kg","30kg","50kg","60kg"]},
+
+{name:"Fevicol Marine",img:"https://m.media-amazon.com/images/I/51XAdmqGSlL._AC_UF1000,1000_QL80_.jpg",weights:["500g","1kg","2kg","5kg","10kg","20kg","30kg","50kg","60kg"]},
+
+{name:"Fevicol Hiper",img:"https://m.media-amazon.com/images/I/51MP76opUDL._AC_UF1000,1000_QL80_.jpg",weights:["500g","1kg","2kg","5kg","10kg","20kg","30kg","50kg","60kg"]},
+
+{name:"Fevicol Hiper Star",img:"https://m.media-amazon.com/images/I/51MTEkxZF+L._AC_UF1000,1000_QL80_.jpg",weights:["1kg","2kg","5kg","10kg","20kg","50kg"]},
+
+{name:"Fevicol Speedx",img:"https://m.media-amazon.com/images/I/519Q3QxGz6L._AC_UF1000,1000_QL80_.jpg",weights:["500g","1kg","2kg","5kg","10kg","20kg","30kg","50kg"]},
+
+{name:"Fevicol Heatx",img:"https://m.media-amazon.com/images/I/61KB34kxuSL._AC_UF1000,1000_QL80_.jpg",weights:["100ml","200ml","500ml","1ltr","2ltr","5ltr"]},
+
+{name:"Fevicol SR 998",img:"https://m.media-amazon.com/images/I/51uSaM1pXOL.jpg",weights:["100ml","200ml","500ml","1ltr","2ltr","5ltr","25ltr"]},
+
+{name:"Fevicol SR 505",img:"https://5.imimg.com/data5/DJ/DW/MY-29232216/synthetic-rubber-adhesive-500x500.jpg",weights:["100ml","200ml","500ml","1ltr","2ltr","5ltr","25ltr"]},
+
+{name:"Fevicol Foamfix",img:"https://m.media-amazon.com/images/I/41en7XbTXNL._AC_UF1000,1000_QL80_.jpg",weights:["500ml","1ltr","2ltr","5ltr","25ltr"]},
+
+{name:"Fevicol Xpres",img:"https://m.media-amazon.com/images/I/41pIpVRyEDL.jpg",weights:["500g"]},
+
+{name:"Fevicol Plastilok",img:"https://cpimg.tistatic.com/11617431/b/4/Fevicol-Plasti-Lok..jpg",weights:["450g"]},
+
+{name:"Fevicol Probond Edgelok",img:"https://m.media-amazon.com/images/I/3162X2norWL.jpg",weights:["140g"]},
+
+{name:"Fevicol Relam",img:"https://5.imimg.com/data5/SELLER/Default/2023/8/338656745/VF/IM/QA/109222602/fevicol-relam-adhesive.jpeg",weights:["450g"]},
+
+{name:"Fevicol Wudfill",img:"https://m.media-amazon.com/images/I/41s8wyn1MeL.jpg",weights:["20g","50g"]},
+
+{name:"Fevicol Nail Free Ultra",img:"https://m.media-amazon.com/images/I/61RihkJWuhL._AC_UF1000,1000_QL80_.jpg",weights:["435g"]},
+
+{name:"Fevicol Powerlocck",img:"https://5.imimg.com/data5/SELLER/Default/2025/10/550587338/PY/SM/MA/1838472/image.jpeg",weights:["320g"]},
+
+{name:"Masterlok",img:"https://m.media-amazon.com/images/I/51LCt2SIDHL._AC_UF1000,1000_QL80_.jpg",weights:["125g","250g","500g","1kg","2kg","5kg","10kg","20kg","50kg"]},
+
+{name:"Masterlok Xtra",img:"https://5.imimg.com/data5/SELLER/Default/2025/10/553664931/BF/DC/KH/79428169/masterlock-xtra.jpeg",weights:["1kg","5kg","10kg","20kg","50kg"]},
+
+{name:"Grippo",img:"https://m.media-amazon.com/images/I/41udeDiQkTL._AC_UF1000,1000_QL80_.jpg",weights:["1kg","5kg","10kg","20kg","50kg"]},
+
+{name:"Fevikwik102",img:"https://static1.industrybuying.com/products/adhesives-sealants-and-tape/cyanoacrylate-adhesives/instant-adhesive/ADH.INS.935507343_1759732135261.webp",weights:["20g","125g","250g"]},
+
+{name:"Fevikwik203",img:"https://m.media-amazon.com/images/I/617B9A5rSuL.jpg",weights:["20g","125g","250g"]},
+
+{name:"Fevikwik463",img:"https://5.imimg.com/data5/SELLER/Default/2026/1/573650511/KV/XB/SW/47184141/20g-fevikwik-463-cyanoacrylate-adhesive.jpeg",weights:["20g","125g","250g"]},
+
+{name:"Marinekoat",img:"https://m.media-amazon.com/images/I/61EGOcfO+qL.jpg",weights:["500ml","1ltr","5ltr"]},
+
+{name:"Terminator Wood Preservative",img:"https://m.media-amazon.com/images/I/61uVJymM7pL._AC_UF894,1000_QL80_.jpg",weights:["100ml","250ml","500ml","1ltr","3ltr","5ltr"]},
+
+{name:"Terminator Structure Preservative",img:"https://m.media-amazon.com/images/I/71N+oF+6qEL._AC_UF1000,1000_QL80_.jpg",weights:["500ml","1ltr","5ltr"]},
+
+{name:"Unitint",img:"https://m.media-amazon.com/images/I/3168h5ZBC7L._AC_UF1000,1000_QL80_.jpg",weights:["200ml","50ml","100ml"]},
+{name:"GP",img:"https://5.imimg.com/data5/SELLER/Default/2023/10/354772057/GL/JC/AS/139063491/whatsapp-image-2023-10-21-at-11-02-25-am-3.jpeg",weights:["260ml"]}
+
+
+];
+
+const container=document.getElementById("products");
+
+function displayProducts(list){
+
+container.innerHTML="";
+
+list.forEach(p=>{
+
+container.innerHTML+=`
+
+<div class="card" onclick="openPopup('${p.name}')">
+<img src="${p.img}">
+<h3>${p.name}</h3>
+</div>
+
+`;
+
+});
+
+}
+
+displayProducts(products);
+
+document.getElementById("search").addEventListener("input",function(){
+
+let text=this.value.toLowerCase();
+
+let filtered=products.filter(p=>p.name.toLowerCase().includes(text));
+
+displayProducts(filtered);
+
+});
+
+let currentProduct="";
+
+function openPopup(name){
+
+currentProduct=name;
+
+document.getElementById("productName").innerText=name;
+
+let weightSelect=document.getElementById("weight");
+weightSelect.innerHTML="";
+
+let product=products.find(p=>p.name===name);
+
+product.weights.forEach(w=>{
+weightSelect.innerHTML+=`<option>${w}</option>`;
+});
+
+if(name==="Unitint"){
+document.getElementById("colorBox").style.display="block";
+}else{
+document.getElementById("colorBox").style.display="none";
+}
+if(name==="GP"){
+document.getElementById("typeBox").style.display="block";
+}else{
+document.getElementById("typeBox").style.display="none";
+}
+
+
+document.getElementById("popup").style.display="flex";
+
+}
+
+function closePopup(){
+document.getElementById("popup").style.display="none";
+}
+
+function addToCart(){
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+let product=products.find(p=>p.name===currentProduct);
+
+let color="";
+
+if(currentProduct==="Unitint"){
+color=document.getElementById("color").value;
+}
+let type="";
+
+if(currentProduct==="GP"){
+color=document.getElementById("type").value;
+
+}
+
+cart.push({
+
+name:currentProduct,
+color:color,
+weight:document.getElementById("weight").value,
+qty:document.getElementById("qty").value,
+unit:document.getElementById("unit").value,
+img:product.img
+
+});
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+toast("Added to cart");
+
+document.getElementById("popup").style.display="none";
+
+}
+
+function toast(msg){
+
+let t=document.getElementById("toast");
+
+t.innerText=msg;
+
+t.style.opacity=1;
+
+setTimeout(()=>{
+t.style.opacity=0;
+},2000);
+
+}
+
+</script>
+
+</body>
+</html>
