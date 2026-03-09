@@ -106,7 +106,7 @@ button{
 <input id="name" placeholder="Order name">
 
 <button onclick="placeOrder()">Place Order</button>
-
+<button onclick="location.href='index.html'">Back To Home</button>
 </div>
 
 <div id="popup">
@@ -186,6 +186,13 @@ function placeOrder(){
 
   let customerName = document.getElementById("name").value;
   let instruction = document.getElementById("instructions").value;
+function placeOrder(){
+
+localStorage.setItem("orderStatus","pending");
+
+window.location.href="index.html";
+
+}
 
   if(!customerName){
     alert("Enter order name");
